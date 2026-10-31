@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-// Test-mode provider: returns JSON files from Resources/SampleWeather instead of calling the API.
-// The JSON then goes through the same parser, UI and environment as live data.
 public class SampleWeatherProvider : IWeatherProvider
 {
-    const float SimulatedDelay = 0.6f;   // long enough to see the loading indicator
+    const float SimulatedDelay = 0.6f;
 
     public static readonly SampleScenario[] Scenarios =
     {
@@ -38,7 +36,6 @@ public class SampleWeatherProvider : IWeatherProvider
 
         if (request.Sample.HttpStatus != 200)
         {
-            // Same error handling the live provider uses for a failed HTTP call.
             onComplete(RequestResult<string>.Fail(WeatherErrors.Describe(request.Sample.HttpStatus, file.text)));
             yield break;
         }

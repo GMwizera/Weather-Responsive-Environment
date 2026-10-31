@@ -4,7 +4,6 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
 
-// Live provider: calls the OpenWeather Current Weather Data API with UnityWebRequest.
 public class OpenWeatherProvider : IWeatherProvider
 {
     const string BaseUrl = "https://api.openweathermap.org/data/2.5/weather";
@@ -41,7 +40,7 @@ public class OpenWeatherProvider : IWeatherProvider
             }
             else
             {
-                // responseCode is 0 when the server was never reached (offline, timeout, blocked).
+                // 0 means the server was never reached (offline or timeout).
                 long status = web.result == UnityWebRequest.Result.ProtocolError ? web.responseCode : 0;
                 string body = web.downloadHandler != null ? web.downloadHandler.text : null;
                 Debug.LogWarning($"Weather request failed: {web.result} {web.responseCode} {web.error}");

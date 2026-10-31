@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 
-// Animated "Retrieving weather..." text plus a spinning icon while a request runs.
 public class LoadingIndicator : MonoBehaviour
 {
     [SerializeField] TMP_Text label;

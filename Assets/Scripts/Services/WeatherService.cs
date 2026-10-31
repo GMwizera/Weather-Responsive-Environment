@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-// Runs weather requests and announces the results through events.
-// The UI and the environment subscribe to these events and never call each other.
 public class WeatherService : MonoBehaviour
 {
-    const string ApiKeyResource = "WeatherApiKey";   // Assets/Resources/WeatherApiKey.txt (git-ignored)
+    const string ApiKeyResource = "WeatherApiKey";
     const string SavedKeyName = "OpenWeatherApiKey";
 
     public event Action<WeatherRequest> RequestStarted;
@@ -16,7 +14,7 @@ public class WeatherService : MonoBehaviour
     IWeatherProvider liveProvider;
     IWeatherProvider sampleProvider;
     WeatherRequest lastRequest;
-    int requestVersion;   // lets a newer request win if an older one finishes late
+    int requestVersion;
 
     public bool HasRequest => lastRequest != null;
 
@@ -36,7 +34,6 @@ public class WeatherService : MonoBehaviour
         Send(new WeatherRequest(scenario.Label, 0f, 0f, scenario));
     }
 
-    // Repeats the last request, live or sample.
     public void Refresh()
     {
         if (lastRequest != null)
@@ -59,7 +56,7 @@ public class WeatherService : MonoBehaviour
         yield return provider.FetchJson(request, result => raw = result);
 
         if (version != requestVersion)
-            yield break;   // a newer request was made while this one was running
+            yield break;   // a newer request replaced this one
 
         if (!raw.Success)
         {
@@ -74,8 +71,6 @@ public class WeatherService : MonoBehaviour
             WeatherFailed?.Invoke(parsed.Error);
     }
 
-    // Used by the API key field in the UI, so the WebGL build on GitHub Pages ships without a key.
-    // PlayerPrefs is browser storage in WebGL, so the key is remembered on that computer only.
     public void SaveApiKey(string key)
     {
         key = key.Trim();
@@ -86,7 +81,7 @@ public class WeatherService : MonoBehaviour
 
     public bool HasApiKey => !string.IsNullOrEmpty(LoadApiKey());
 
-    // The local key file wins (Unity editor), otherwise the key saved from the UI.
+    // Local key file first (editor), otherwise the key saved from the UI (WebGL).
     static string LoadApiKey()
     {
         TextAsset keyFile = Resources.Load<TextAsset>(ApiKeyResource);

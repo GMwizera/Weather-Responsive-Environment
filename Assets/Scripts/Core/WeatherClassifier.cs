@@ -1,4 +1,3 @@
-// Maps OpenWeather condition codes to a visual state and works out day or night.
 // Code groups: https://openweathermap.org/weather-conditions
 public static class WeatherClassifier
 {
@@ -8,15 +7,14 @@ public static class WeatherClassifier
             return WeatherState.Fallback;
 
         int id = condition.id;
-        if (id >= 200 && id < 600) return WeatherState.Rain;    // thunderstorm, drizzle, rain
+        if (id >= 200 && id < 600) return WeatherState.Rain;
         if (id >= 600 && id < 700) return WeatherState.Snow;
         if (id == 800) return WeatherState.Clear;
-        if (id > 800 && id < 900) return WeatherState.Cloudy;   // few to overcast clouds
-        return WeatherState.Fallback;                           // 7xx mist/fog/dust and unknown codes
+        if (id > 800 && id < 900) return WeatherState.Cloudy;
+        return WeatherState.Fallback;
     }
 
-    // First choice: the icon's d/n suffix. Second: observation time against sunrise/sunset.
-    // Null when neither is available, so the UI can say "Unknown" instead of guessing.
+    // Icon suffix first, then dt vs sunrise/sunset. Never the computer's clock.
     public static bool? IsDaytime(WeatherCondition condition, WeatherResponse data)
     {
         string icon = condition != null ? condition.icon : null;

@@ -1,6 +1,5 @@
 using System;
 
-// A named place with coordinates, used for the preset dropdown.
 [Serializable]
 public class Location
 {
@@ -16,7 +15,6 @@ public class Location
     }
 }
 
-// A canned JSON response used by test mode. HttpStatus other than 200 simulates a failed call.
 public class SampleScenario
 {
     public string Label { get; }
@@ -31,7 +29,6 @@ public class SampleScenario
     }
 }
 
-// Everything needed to ask for weather once. Kept so the refresh button can repeat it.
 public class WeatherRequest
 {
     public string Label { get; }

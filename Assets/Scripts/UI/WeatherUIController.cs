@@ -4,8 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Handles user input (presets, custom coordinates, refresh, test mode) and shows
-// whatever the WeatherService reports through its events.
 public class WeatherUIController : MonoBehaviour
 {
     [SerializeField] WeatherService weatherService;
@@ -41,7 +39,6 @@ public class WeatherUIController : MonoBehaviour
     [SerializeField] GameObject errorPanel;
     [SerializeField] TMP_Text errorText;
 
-    // Picked for different time zones and climates (tropical, desert, polar, wet, southern hemisphere).
     [SerializeField] List<Location> presetLocations = new List<Location>
     {
         new Location("Kigali, Rwanda", -1.9441f, 30.0619f),
@@ -57,7 +54,7 @@ public class WeatherUIController : MonoBehaviour
     const string Missing = "--";
     const string PlaceholderOption = "Choose a city...";
 
-    int? clockOffsetSeconds;   // set while live data is shown, so the local time keeps ticking
+    int? clockOffsetSeconds;
 
     void Awake()
     {
@@ -107,19 +104,16 @@ public class WeatherUIController : MonoBehaviour
         ShowKeyHint();
     }
 
-    // Current time at the location: UTC now plus the offset the API returned.
     void Update()
     {
         if (clockOffsetSeconds.HasValue)
             localTimeText.text = WeatherParser.FormatLocationTime(System.DateTimeOffset.UtcNow, clockOffsetSeconds.Value);
     }
 
-    // ---------- Input ----------
-
     void OnPresetSelected(int index)
     {
         if (index == 0)
-            return;   // placeholder entry
+            return;
 
         Location location = presetLocations[index - 1];
         validationText.text = "";
@@ -131,7 +125,7 @@ public class WeatherUIController : MonoBehaviour
         if (!CoordinateValidator.TryValidate(latitudeInput.text, longitudeInput.text,
                 out float lat, out float lon, out string error))
         {
-            validationText.text = error;   // nothing is sent when input is invalid
+            validationText.text = error;
             return;
         }
 
@@ -156,7 +150,7 @@ public class WeatherUIController : MonoBehaviour
         }
 
         weatherService.SaveApiKey(apiKeyInput.text);
-        apiKeyInput.text = "";   // the key is never left on screen
+        apiKeyInput.text = "";
         validationText.text = "";
         ShowKeyHint();
     }
@@ -167,8 +161,6 @@ public class WeatherUIController : MonoBehaviour
             ? "Key saved (paste a new one to replace)"
             : "Paste OpenWeather API key";
     }
-
-    // ---------- Event handlers ----------
 
     void ShowLoading(WeatherRequest request)
     {
@@ -196,14 +188,12 @@ public class WeatherUIController : MonoBehaviour
             ? report.WindSpeed.Value.ToString("0.0", CultureInfo.InvariantCulture) + " m/s"
             : Missing;
         dayNightText.text = report.IsDay.HasValue ? (report.IsDay.Value ? "Daytime" : "Nighttime") : "Unknown";
-        // Samples are a fixed moment, so they show the time of the reading to match their day/night.
         clockOffsetSeconds = report.IsSample ? null : report.TimezoneOffsetSeconds;
         localTimeText.text = report.IsSample ? report.ObservedTime ?? Missing : Missing;
         Update();
         sourceText.text = report.SourceLabel;
     }
 
-    // On failure the old values are cleared so the screen never shows stale weather as current.
     void ShowError(string message)
     {
         loadingIndicator.SetActive(false);

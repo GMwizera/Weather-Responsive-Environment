@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// One reusable class for both rain and snow: set activeState in the Inspector.
-// Wind speed from the API pushes the particles sideways.
 public class PrecipitationEffect : MonoBehaviour, IWeatherEffect
 {
     [SerializeField] ParticleSystem particles;
@@ -16,7 +14,6 @@ public class PrecipitationEffect : MonoBehaviour, IWeatherEffect
     {
         if (report.State != activeState)
         {
-            // StopEmitting lets drops already in the air finish falling, so it fades out naturally.
             particles.Stop(true, instant
                 ? ParticleSystemStopBehavior.StopEmittingAndClear
                 : ParticleSystemStopBehavior.StopEmitting);
@@ -38,7 +35,7 @@ public class PrecipitationEffect : MonoBehaviour, IWeatherEffect
         velocity.z = 0f;
 
         if (!Application.isPlaying)
-            particles.Simulate(4f, true, true);   // editor preview/screenshots
+            particles.Simulate(4f, true, true);
         else if (!particles.isPlaying)
             particles.Play();
     }

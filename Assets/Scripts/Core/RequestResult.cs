@@ -1,5 +1,3 @@
-// Generic success/failure wrapper. Used for raw JSON (RequestResult<string>)
-// and for parsed data (RequestResult<WeatherReport>), so errors flow the same way at every step.
 public readonly struct RequestResult<T>
 {
     public bool Success { get; }

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// Listens to the WeatherService and passes each report to every IWeatherEffect under this object.
 public class EnvironmentController : MonoBehaviour
 {
     [SerializeField] WeatherService weatherService;
@@ -27,7 +26,6 @@ public class EnvironmentController : MonoBehaviour
 
     void Start()
     {
-        // Calm clear day until the first response arrives.
         ApplyReport(WeatherReport.Neutral(true, WeatherState.Clear), true);
     }
 
@@ -43,8 +41,6 @@ public class EnvironmentController : MonoBehaviour
 
     void HandleWeatherUpdated(WeatherReport report) => ApplyReport(report);
 
-    // No trustworthy data: stop rain/snow and fall back to a neutral overcast look,
-    // keeping the previous day/night so the scene does not jump.
     void HandleWeatherFailed(string error)
     {
         bool wasDay = current == null || current.IsDay != false;

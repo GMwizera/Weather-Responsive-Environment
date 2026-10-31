@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-// Turns raw JSON (live or sample) into a WeatherReport. Live and test data both go through here.
 public static class WeatherParser
 {
     public static RequestResult<WeatherReport> Parse(string json, WeatherRequest request)
@@ -23,14 +22,12 @@ public static class WeatherParser
         if (data == null)
             return RequestResult<WeatherReport>.Fail("The weather data could not be read.");
 
-        // JsonUtility creates empty objects for missing keys, so check the raw JSON
-        // to avoid showing 0 °C or 0% when the value was never sent.
+        // JsonUtility fills missing objects with zeros, so check the raw JSON instead.
         bool hasMain = HasObject(json, "main");
         bool hasWind = HasObject(json, "wind");
         bool hasClouds = HasObject(json, "clouds");
         WeatherCondition condition = data.weather != null && data.weather.Length > 0 ? data.weather[0] : null;
 
-        // Coordinates from the response when present (sample files), otherwise the ones requested.
         bool hasCoord = HasObject(json, "coord");
         float lat = hasCoord ? data.coord.lat : request.Latitude;
         float lon = hasCoord ? data.coord.lon : request.Longitude;
@@ -62,7 +59,6 @@ public static class WeatherParser
         return string.Format(CultureInfo.InvariantCulture, "Lat {0:0.####}, Lon {1:0.####}", lat, lon);
     }
 
-    // Name and country when the API has them, otherwise the coordinates that were requested.
     static string BuildLocationLabel(WeatherResponse data, string coordinates)
     {
         if (string.IsNullOrWhiteSpace(data.name))
@@ -72,7 +68,6 @@ public static class WeatherParser
         return string.IsNullOrWhiteSpace(country) ? data.name : $"{data.name}, {country}";
     }
 
-    // Time of the reading in the location's own time zone (dt + timezone offset).
     static string FormatObservedTime(WeatherResponse data)
     {
         if (data.dt <= 0)
@@ -80,7 +75,6 @@ public static class WeatherParser
         return FormatLocationTime(DateTimeOffset.FromUnixTimeSeconds(data.dt), data.timezone);
     }
 
-    // Shifts a UTC moment by the location's offset. The computer's own time zone is never used.
     public static string FormatLocationTime(DateTimeOffset utc, int offsetSeconds)
     {
         DateTime local = utc.UtcDateTime.AddSeconds(offsetSeconds);

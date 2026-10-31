@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// Rain and wind sounds generated from filtered noise, so no audio files are needed.
-// Rain plays during rain; wind volume follows the API's wind speed.
 public class WeatherAudio : MonoBehaviour, IWeatherEffect
 {
     [SerializeField] AudioSource rainSource;
@@ -46,7 +44,7 @@ public class WeatherAudio : MonoBehaviour, IWeatherEffect
         windSource.volume = Mathf.MoveTowards(windSource.volume, windTarget, fadeSpeed * Time.deltaTime);
     }
 
-    // White noise through a simple low-pass filter. Lower smoothing = deeper sound.
+    // Filtered white noise, so no audio files are needed.
     static AudioClip CreateNoise(string clipName, float smoothing, bool gusts)
     {
         int length = SampleRate * 4;
@@ -64,7 +62,6 @@ public class WeatherAudio : MonoBehaviour, IWeatherEffect
             peak = Mathf.Max(peak, Mathf.Abs(data[i]));
         }
 
-        // Normalise and fade the loop seam to avoid clicks.
         int fade = SampleRate / 10;
         for (int i = 0; i < length; i++)
         {

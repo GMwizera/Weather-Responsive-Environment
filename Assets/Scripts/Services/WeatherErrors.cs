@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// Turns HTTP status codes into messages a user can act on.
 public static class WeatherErrors
 {
     public static string Describe(long status, string body)

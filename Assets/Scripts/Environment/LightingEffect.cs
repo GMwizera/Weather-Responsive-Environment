@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-// Changes the skybox, sun, fog, street lamps and ground to match the weather and time of day.
-// Skyboxes come from the "Day-Night Skyboxes" asset pack.
 public class LightingEffect : MonoBehaviour, IWeatherEffect
 {
     [Header("Skyboxes")]
@@ -10,7 +8,7 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
     [SerializeField] Material clearNightSky;
     [SerializeField] Material cloudyDaySky;
     [SerializeField] Material cloudyNightSky;
-    [SerializeField] Material stormDaySky;     // rain and snow
+    [SerializeField] Material stormDaySky;
     [SerializeField] Material stormNightSky;
 
     [Header("Scene")]
@@ -28,15 +26,14 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
 
     public void Apply(WeatherReport report, bool instant)
     {
-        bool isDay = report.IsDay != false;   // unknown counts as day
+        bool isDay = report.IsDay != false;
         WeatherState state = report.State;
 
-        // Work out how the scene should look.
         Material sky = PickSky(state, isDay);
         float sunPower = isDay ? 1.3f : 0.25f;
         if (state != WeatherState.Clear)
             sunPower *= 0.55f;
-        sunPower *= 1f - (report.CloudCoverage ?? 0) / 250f;   // more cloud cover, dimmer sun
+        sunPower *= 1f - (report.CloudCoverage ?? 0) / 250f;
 
         Color ambient = isDay ? new Color(0.6f, 0.64f, 0.7f) : new Color(0.1f, 0.12f, 0.22f);
         if (state != WeatherState.Clear)
@@ -50,7 +47,7 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
         float fogDensity = FogDensity(state);
         float lamps = isDay ? 0f : 12f;
 
-        sun.color = isDay ? new Color(1f, 0.95f, 0.86f) : new Color(0.6f, 0.7f, 1f);   // warm sun, cool moon
+        sun.color = isDay ? new Color(1f, 0.95f, 0.86f) : new Color(0.6f, 0.7f, 1f);
 
         if (fade != null)
             StopCoroutine(fade);
@@ -75,7 +72,7 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
             case WeatherState.Rain:
             case WeatherState.Snow:
                 return isDay ? stormDaySky : stormNightSky;
-            default:   // cloudy, and the fallback look for fog, haze, unknown codes or errors
+            default:
                 return isDay ? cloudyDaySky : cloudyNightSky;
         }
     }
@@ -101,11 +98,10 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
             case WeatherState.Cloudy: return 0.006f;
             case WeatherState.Rain: return 0.015f;
             case WeatherState.Snow: return 0.02f;
-            default: return 0.035f;   // fallback is a thick haze so it looks different from cloudy
+            default: return 0.035f;
         }
     }
 
-    // Smooth transition: the old sky fades out, swaps, and the new one fades in while the lights blend.
     IEnumerator Fade(Material newSky, float sunPower, Color ambient, Color fogColor, float fogDensity, Color groundColor, float lamps)
     {
         float startSun = sun.intensity;
@@ -123,7 +119,7 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
                 SetSky(newSky, 0f);
                 swapped = true;
             }
-            float brightness = Mathf.Abs(t - 0.5f) * 2f;   // 1 -> 0 -> 1
+            float brightness = Mathf.Abs(t - 0.5f) * 2f;
             if (RenderSettings.skybox != null)
                 RenderSettings.skybox.SetFloat("_Exposure", Mathf.Max(brightness, 0.15f));
 
@@ -138,7 +134,7 @@ public class LightingEffect : MonoBehaviour, IWeatherEffect
         fade = null;
     }
 
-    // A copy of the material is used so Play mode never edits the asset file.
+    // Copy so Play mode does not change the material asset.
     void SetSky(Material source, float exposure)
     {
         if (source == null)

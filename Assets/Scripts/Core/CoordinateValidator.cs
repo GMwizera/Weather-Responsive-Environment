@@ -1,6 +1,5 @@
 using System.Globalization;
 
-// Checks the custom latitude/longitude fields before any request is sent.
 public static class CoordinateValidator
 {
     public static bool TryValidate(string latText, string lonText, out float latitude, out float longitude, out string error)
@@ -52,7 +51,6 @@ public static class CoordinateValidator
         return true;
     }
 
-    // InvariantCulture so "1.5" parses the same on every machine and browser.
     static bool TryParseNumber(string text, out float value)
     {
         return float.TryParse(text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out value)
