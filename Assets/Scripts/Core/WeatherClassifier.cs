@@ -1,4 +1,4 @@
-// Code groups: https://openweathermap.org/weather-conditions
+
 public static class WeatherClassifier
 {
     public static WeatherState Classify(WeatherCondition condition)
@@ -14,7 +14,7 @@ public static class WeatherClassifier
         return WeatherState.Fallback;
     }
 
-    // Icon suffix first, then dt vs sunrise/sunset. Never the computer's clock.
+
     public static bool? IsDaytime(WeatherCondition condition, WeatherResponse data)
     {
         string icon = condition != null ? condition.icon : null;

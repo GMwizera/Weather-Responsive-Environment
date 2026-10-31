@@ -1,6 +1,5 @@
 using System;
 
-// Field names must match the OpenWeather JSON keys for JsonUtility.
 [Serializable]
 public class WeatherResponse
 {

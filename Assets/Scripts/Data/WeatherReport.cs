@@ -7,7 +7,6 @@ public enum WeatherState
     Fallback
 }
 
-// Null values mean the field was missing from the response.
 public class WeatherReport
 {
     public string LocationLabel { get; set; }
